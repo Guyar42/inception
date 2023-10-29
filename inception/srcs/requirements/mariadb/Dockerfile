@@ -1,10 +1,14 @@
 FROM debian:bullseye
 
-RUN apt update -y && \
-    apt upgrade -y && \
-    apt install mariadb-server -y
+# RUN apt update -y && \
+#     apt upgrade -y && \
+#     apt install mariadb-server -y
 
-# RUN apt install mysql-server mysql-client -y
+# RUN apk add --no-cache mariadb mariadb-client
+
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache --quit mariadb mariadb-client
 
 COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
