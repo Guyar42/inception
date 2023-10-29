@@ -43,18 +43,7 @@ services:
 
 volumes:
   wordpress:
-    driver: local
-    driver_opts:
-      device: /home/guyar/data/wordpress
-      o: bind
-      type: volume
-    
   mariadb:
-    driver: local
-    driver_opts:
-      device: /home/guyar/data/database
-      o: bind
-      type: volume
 
 networks:
   inception:
