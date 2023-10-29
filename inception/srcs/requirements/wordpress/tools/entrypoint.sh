@@ -1,4 +1,4 @@
-target="/etc/php7/php-fpm.d/www.conf"
+target="/etc/php7.4/php-fpm.d/www.conf"
 
 # Check if the configuration has already been done
 grep -E "listen = 127.0.0.1" $target > /dev/null 2>&1
