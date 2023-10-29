@@ -1,23 +1,18 @@
-FROM alpine:latest
+FROM debian:bullseye
 
-# RUN apt update -y && \
-#     apt upgrade -y && \
-#     apt install mariadb-server -y
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install -y mariadb-server
 
-# RUN apk add --no-cache mariadb mariadb-client
+RUN mkdir -p /var/lib/mysqld /run/mysqld
 
-RUN apk update && \
-    apk upgrade && \
-    apk add --no-cache --quit mariadb mariadb-client
+COPY conf/create_db.sql /tmp/create_db.sql
+COPY conf/mariadb-server.cnf	/etc/mariadb.conf.d/mariadb-server.cnf
+COPY tools/entrypoint.sh ./entrypoint.sh
 
-# COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+RUN mariadb-install-db --datadir=/var/lib/mysql --auth-root-authentication-method=normal
+RUN chmod +x ./entrypoint.sh
+RUN chown -R mysql:mysql /var/lib/mysql
+RUN chown -R mysql:mysql /var/lib/mysqld
 
-# RUN service mariadb start
-
-# RUN mysql -u root -e "CREATE DATABASE IF NOT EXISTS $SQL_DATABASE;"
-# RUN mysql -u root -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';"
-# RUN mysql -u root -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';"
-# RUN mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';"
-# RUN mysql -u root -e "FLUSH PRIVILEGES;"
-# RUN mysqladmin -u root -p$SQL_ROOT_PASSWORD shutdown
-# RUN exec mysqld_safe
+ENTRYPOINT ["sh", "entrypoint.sh" ]
