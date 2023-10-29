@@ -5,7 +5,7 @@ RUN apt update && \
 RUN apt -y install wget
 RUN apt install -y php7.4 php-phar php-json php-curl php-fpm php-mysqli php-iconv
 
-RUN mkdir -p /var/www/wordpress
+RUN mkdir -p /var/www/wordpress /run/php
 
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 RUN mv wp-cli.phar /usr/bin/wp
