@@ -15,4 +15,6 @@ RUN chmod +x ./entrypoint.sh
 RUN chown -R mysql:mysql /var/lib/mysql
 RUN chown -R mysql:mysql /var/lib/mysqld
 
+EXPOSE 3306
+
 ENTRYPOINT ["sh", "entrypoint.sh" ]
