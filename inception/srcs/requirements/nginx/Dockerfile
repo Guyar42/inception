@@ -6,10 +6,10 @@ RUN	apt update && \
 
 RUN	mkdir -p /etc/nginx/ssl /var/run/nginx
 
-RUN openssl req -x509 -nodes \
-      -out /etc/nginx/ssl/guyar.42.fr.crt \
-      -keyout /etc/nginx/ssl/guyar.42.fr.key \
-      -subj "/C=FR/ST=Rhone/L=Lyon/O=42/OU=42/CN=guyar.42.fr/UID=guyar/emailAddress=guyar@student.42lyon.fr"
+RUN		openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+		-keyout /etc/nginx/ssl/guyar.42.fr.key \
+		-out /etc/nginx/ssl/guyar.42.fr.crt \
+		-subj "/C=FR/ST=Rhone/L=Lyon/O=42/CN=guyar.42.fr/emailAddress=guyar@student.42lyon.fr"
 
 COPY conf/nginx.conf /etc/nginx/http.d/default.conf
 EXPOSE 443
