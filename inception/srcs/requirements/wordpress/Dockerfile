@@ -6,9 +6,9 @@ RUN apt update && \
     apt install php-mysql -y && \
     apt install php-fpm -y
 
-COPY ./conf/script.sh /
+COPY ./conf/entrypoint.sh /
 
-RUN chmod +x ./script.sh
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 9000
 
