@@ -5,7 +5,7 @@ if [ $? -ne 0 ]; then
 	usr/bin/mysqld_safe --datadir=/var/lib/mysql &
 
 	# Wait for the MySQL server to be up
-	while ! mysqladmin ping -h "$MARIADB_HOST" --silent; do
+	while ! mysqladmin ping -h "$SQL_HOST" --silent; do
     	sleep 1
 	done
 
