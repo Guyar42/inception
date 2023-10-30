@@ -1,4 +1,4 @@
-FROM    debian:bullseye
+FROM debian:bullseye
 
 RUN	apt update && \
     apt upgrade -y && \

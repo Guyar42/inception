@@ -1,17 +1,23 @@
-# Check if the setup file already exists
-cat .setup 2> /dev/null
+#!/bin/bash
 
-if [ $? -ne 0 ]; then
-	usr/bin/mysqld_safe --datadir=/var/lib/mysql &
+# Démarrage de MariaDB
+mysqld_safe --datadir=/var/lib/mysql &
 
-	# Wait for the MySQL server to be up
-	while ! mysqladmin ping -h "$SQL_HOST" --silent; do
-    	sleep 1
-	done
+# Attente que le serveur MariaDB soit prêt
+while ! mysqladmin ping -h "$MYSQL_HOST" --silent; do
+    sleep 1
+done
 
-	# Execute the SQL script in MariaDB
-	eval "echo \"$(cat /tmp/create_db.sql)\"" | mariadb
-	touch .setup
-fi
+# Exécution des commandes SQL pour configurer la base de données
+mysql -u root -p"$SQL_ROOT_PASSWORD" <<EOF
+CREATE DATABASE IF NOT EXISTS $SQL_DATABASE;
+CREATE USER IF NOT EXISTS '$SQL_USER'@'%' IDENTIFIED BY '$SQL_PASSWORD';
+GRANT ALL PRIVILEGES ON $SQL_DATABASE.* TO $SQL_USER@'%';
+FLUSH PRIVILEGES;
+EOF
 
-usr/bin/mysqld_safe --datadir=/var/lib/mysql
+# Arrêt du serveur MariaDB
+mysqladmin -p"$SQL_ROOT_PASSWORD" shutdown
+
+# Lancement du serveur MariaDB en mode normal
+exec mysqld
