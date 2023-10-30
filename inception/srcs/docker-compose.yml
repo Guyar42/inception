@@ -1,49 +1,58 @@
-version: '3'
+version: '3.7'
 
 services:
   mariadb:
+    build: ./requirements/mariadb
     container_name: mariadb
+    env_file: .env
+    image: mariadb
     networks:
       - inception
-    build: ./requirements/mariadb
-    env_file: .env
-    volumes:
-      - mariadb:/var/lib/mysql
     restart: unless-stopped
-    expose:
-      - "3306"
+    volumes:
+      - mariadb-volume:/var/lib/mysql
 
   nginx:
+    build: ./requirements/nginx
     container_name: nginx
-    volumes:
-      - wordpress:/var/www/wordpress
-    networks:
-      - inception
     depends_on:
       - wordpress
-    build: ./requirements/nginx
-    env_file: .env
-    ports:
-      - "443:443"
-    restart: on-failure
-
-  wordpress:
-    container_name: wordpress
-    env_file: .env
-    volumes:
-      - wordpress:/var/www/wordpress
+    image: nginx
     networks:
       - inception
+    ports:
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - wordpress-volume:/var/www/wordpress
+
+  wordpress:
     build: ./requirements/wordpress
+    container_name: wordpress
     depends_on:
       - mariadb
-    restart: on-failure
-    expose:
-      - "9000"
+    env_file: .env
+    image: wordpress
+    networks:
+      - inception
+    restart: unless-stopped
+    volumes:
+      - wordpress-volume:/var/www/wordpress
 
 volumes:
-  wordpress:
-  mariadb:
+  mariadb-volume:
+    driver: local
+    driver_opts:
+      device: /home/dvergobb/data/database
+      o: bind
+      type: volume
+
+  wordpress-volume:
+    driver: local
+    driver_opts:
+      device: /home/dvergobb/data/wordpress
+      o: bind
+      type: volume
 
 networks:
   inception:
