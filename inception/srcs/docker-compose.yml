@@ -43,14 +43,14 @@ volumes:
   mariadb-volume:
     driver: local
     driver_opts:
-      device: /home/dvergobb/data/database
+      device: /home/guyar/data/database
       o: bind
       type: volume
 
   wordpress-volume:
     driver: local
     driver_opts:
-      device: /home/dvergobb/data/wordpress
+      device: /home/guyar/data/wordpress
       o: bind
       type: volume
 
