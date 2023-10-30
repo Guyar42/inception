@@ -14,7 +14,7 @@ if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
 
     wp config create --dbname=$SQL_DATABASE --dbuser=$SQL_USER --dbpass=$SQL_PASSWORD --dbhost=$SQL_HOST --path="/var/www/wordpress" --allow-root
 
-    wp core install --url=$WP_URL/ --title=$WP_TITLE --admin_user=$WP_ADMIN --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --path="/var/www/wordpress" --allow-root
+    wp core install --url=$WP_DOMAIN/ --title=$WP_TITLE --admin_user=$WP_ADMIN --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --path="/var/www/wordpress" --allow-root
    
     wp user create $WP_USER $WP_USER_EMAIL --role=author --user_pass=$WP_USER_PWD --path="/var/www/wordpress" --allow-root
    
