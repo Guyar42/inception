@@ -6,7 +6,7 @@ RUN apt update && \
     apt install php-mysql -y && \
     apt install php-fpm -y
 
-COPY ./conf/entrypoint.sh /
+COPY ./tools/entrypoint.sh /
 
 RUN chmod +x ./entrypoint.sh
 
