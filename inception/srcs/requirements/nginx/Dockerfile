@@ -11,7 +11,7 @@ RUN		openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
 		-out /etc/nginx/ssl/guyar.42.fr.crt \
 		-subj "/C=FR/ST=Rhone/L=Lyon/O=42/CN=guyar.42.fr/emailAddress=guyar@student.42lyon.fr"
 
-COPY conf/nginx.conf /etc/nginx/site-available/default
+COPY conf/nginx.conf /etc/nginx/sites-available/default
 EXPOSE 443
 
 CMD		nginx -g "daemon off;"
