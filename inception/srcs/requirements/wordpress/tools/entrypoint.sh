@@ -1,36 +1,28 @@
-target="/etc/php/7.4/fpm/pool.d/www.conf"
-socket="/run/php/php7.4-fpm.sock"
+#!/bin/bash
 
-# Vérifiez si la configuration a déjà été effectuée
-grep -E "listen = $socket" $target > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-    sed -i "s|.*listen =.*|listen = $socket|g" $target
-    echo "env[SQL_HOST] = \$SQL_HOST" >> $target
-    echo "env[SQL_USER] = \$SQL_USER" >> $target
-    echo "env[SQL_PASSWORD] = \$SQL_PASSWORD" >> $target
-    echo "env[SQL_DATABASE] = \$SQL_DATABASE" >> $target
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar 
+sleep 10
+chmod +x wp-cli.phar 
+mv wp-cli.phar /usr/local/bin/wp
+
+if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
+    mkdir -p /var/www/wordpress
+
+    wp core download  --path="/var/www/wordpress" --allow-root
+
+    cd /var/www/wordpress
+
+    wp config create --dbname=$SQL_DATABASE --dbuser=$SQL_USER --dbpass=$SQL_PASSWORD --dbhost=$SQL_HOST --path="/var/www/wordpress" --allow-root
+
+    wp core install --url=$WP_URL/ --title=$WP_TITLE --admin_user=$WP_ADMIN --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --path="/var/www/wordpress" --allow-root
+   
+    wp user create $WP_USER $WP_USER_EMAIL --role=author --user_pass=$WP_USER_PWD --path="/var/www/wordpress" --allow-root
+   
 fi
 
-if [ ! -f "wp-config.php" ]; then
-    cp /conf/wp-config ./wp-config.php
+sed -i 's/listen = \/run\/php\/php7.4-fpm.sock/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf
 
-    sleep 5
 
-    wp core install --url="$WP_URL" \
-                    --title="$WP_TITLE" \
-                    --admin_user="$WP_ADMIN" \
-                    --admin_password="$WP_ADMIN_PWD" \
-                    --admin_email="$WP_ADMIN_EMAIL" \
-                    --skip-email
 
-    wp plugin update --all
-
-    wp theme install astra --activate
-
-    wp user create $WP_USER \
-                    $WP_USER_EMAIL \
-                    --role=editor \
-                    --user_pass=$WP_USER_PWD
-fi
-
-php-fpm7.4 --nodaemonize
+mkdir -p /run/php
+/usr/sbin/php-fpm7.4 --nodaemonize
