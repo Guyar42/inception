@@ -11,6 +11,8 @@ if [ ! -f "wp-config.php" ]; then
     sed -i "s|\$_SQL_PASSWORD|$SQL_PASSWORD|g" wp-config.php
     sed -i "s|\$_SQL_HOST|$SQL_HOST|g" wp-config.php
 
+    sleep 5
+
     wp core install --url="$WP_URL" \
 					--title="$WP_TITLE" \
 					--admin_user="$WP_ADMIN" \
