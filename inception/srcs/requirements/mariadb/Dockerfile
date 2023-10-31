@@ -1,16 +1,22 @@
 FROM debian:bullseye
 
-RUN	mkdir -p /var/lib/mysql
+RUN apt-get update && apt-get install -y \
+	mariadb-server \
+	mariadb-client \
+	&& rm -rf /var/lib/apt/lists/*
 
-RUN	apt update -y \
-		&& apt upgrade -y \
-		&& apt install mariadb-server -y
+RUN mkdir -p /var/run/mysqld
+RUN chown -R mysql:mysql /var/run/mysqld
+RUN chmod 777 /var/run/mysqld
 
-EXPOSE	3306
+COPY tools/entrypoint.sh /usr/local/bin/
 
-COPY 	conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+COPY conf/mysqld.conf /etc/mysql/mariadb.conf.d/mysqld.cnf
 
-COPY 	tools/entrypoint.sh	./entrypoint.sh
-RUN		chmod +x ./entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-CMD		["sh", "./entrypoint.sh"]
+EXPOSE 3306
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+CMD ["mysqld", "--bind-address=0.0.0.0"]
