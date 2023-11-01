@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     volumes:
       - mariadb-volume:/var/lib/mysql
-
+  
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress

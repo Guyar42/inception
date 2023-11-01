@@ -1,22 +1,16 @@
-FROM debian:bullseye
+FROM	alpine:3.15
 
-RUN apt-get update && apt-get install -y \
-	mariadb-server \
-	mariadb-client \
-	&& rm -rf /var/lib/apt/lists/*
+RUN	apk update && apk add mariadb mariadb-client
 
-RUN mkdir -p /var/run/mysqld
-RUN chown -R mysql:mysql /var/run/mysqld
-RUN chmod 777 /var/run/mysqld
+COPY	conf/create_db.sql /tmp/create_db.sql
+COPY	tools/entrypoint.sh ./entrypoint.sh
+COPY	conf/mariadb-server.cnf /etc/my.cnf.d/mariadb-server.cnf
 
-COPY tools/entrypoint.sh /usr/local/bin/
+RUN	mkdir -p /var/lib/mysqld /run/mysqld
+RUN	mariadb-install-db --datadir=/var/lib/mysql --auth-root-authentication-method=normal
 
-COPY conf/mysqld.conf /etc/mysql/mariadb.conf.d/mysqld.cnf
+RUN	chmod +x ./entrypoint.sh
+RUN	chown -R mysql:mysql /var/lib/mysql
+RUN	chown -R mysql:mysql /run/mysqld
 
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-EXPOSE 3306
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-CMD ["mysqld", "--bind-address=0.0.0.0"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
